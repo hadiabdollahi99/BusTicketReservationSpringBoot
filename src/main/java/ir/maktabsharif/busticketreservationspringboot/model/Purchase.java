@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 @Builder
 @Getter
@@ -17,8 +18,7 @@ import java.io.Serializable;
 public class Purchase extends BaseEntity<Long> implements Serializable {
 
     private String customerName;
-    @Enumerated(value = EnumType.STRING)
-    private Gender customerGender;
+    private String gender;
     private String ticketNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)

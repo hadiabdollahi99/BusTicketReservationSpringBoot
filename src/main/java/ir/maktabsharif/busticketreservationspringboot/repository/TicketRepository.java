@@ -4,20 +4,20 @@ import ir.maktabsharif.busticketreservationspringboot.model.Ticket;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
 
-public interface TicketRepository extends JpaRepository<Ticket,Long> {
-    @Query("SELECT t FROM Ticket t WHERE t.departureCity = :departureCity AND t.destinationCity = :destinationCity AND t.departureDate = :departureDate ORDER BY t.departureTime ASC")
-    List<Ticket> findAvailableTickets(@Param("departureCity") String departureCity,
-                                    @Param("destinationCity") String destinationCity,
-                                    @Param("departureDate") LocalDate departureDate);
+@Repository
+public interface TicketRepository extends JpaRepository<Ticket, Long> {
 
-    List<Ticket> findByDepartureCityAndDestinationCityAndDepartureDate(String departureCity, String destinationCity, LocalDate departureDate);
-
-
-
-    @Query("SELECT t FROM Ticket t WHERE t.departureDate >= CURRENT_DATE ORDER BY t.departureDate ASC, t.departureTime ASC")
-    List<Ticket> findUpcomingTickets();
+    @Query("SELECT t FROM Ticket t WHERE t.departureCity = :departure " +
+            "AND t.destinationCity = :destination " +
+            "AND t.departureDate = :date " +
+            "ORDER BY t.departureTime ASC")
+    List<Ticket> findAvailableTickets(
+            @Param("departure") String departure,
+            @Param("destination") String destination,
+            @Param("date") LocalDate date);
 }

@@ -1,6 +1,12 @@
 spring:
   application:
     name: BusTicketReservationSpringBoot
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+    cache: false
 
   datasource:
     url: jdbc:postgresql://localhost:5432/bus_ticket_reservation

@@ -19,8 +19,8 @@ import java.util.List;
 @Table(name = "Users")
 public class User extends BaseEntity<Long> implements Serializable {
     private String username;
-    private String email;
     private String password;
+    private String fullName;
 
     private boolean enabled = true;
 
