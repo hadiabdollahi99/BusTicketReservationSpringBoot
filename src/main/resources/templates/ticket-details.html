@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" dir="rtl" lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>جزئیات بلیط</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tahoma', 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            border: 1px solid #ddd;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 3px solid #2c5aa0;
+        }
+
+        .header h1 {
+            color: #2c5aa0;
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .alert {
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .ticket-details {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            font-size: 18px;
+        }
+
+        .ticket-details td {
+            padding: 18px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .ticket-details td:first-child {
+            width: 40%;
+            background-color: #f9f9f9;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .ticket-details td:last-child {
+            width: 60%;
+            color: #333;
+        }
+
+        .ticket-details tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        .ticket-details tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background-color: #c82333;
+        }
+
+        .btn-back {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-back:hover {
+            background-color: #5a6268;
+        }
+
+        .confirmation-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            display: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn-confirm {
+            background-color: #dc3545;
+            color: white;
+            padding: 10px 20px;
+        }
+
+        .btn-cancel-modal {
+            background-color: #6c757d;
+            color: white;
+            padding: 10px 20px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>بليط اتوبوس</h1>
+    </div>
+
+    <div th:if="${success}" class="alert alert-success">
+        <span th:text="${success}"></span>
+    </div>
+
+    <div th:if="${error}" class="alert alert-danger">
+        <span th:text="${error}"></span>
+    </div>
+
+    <table class="ticket-details">
+        <tr>
+            <td>شناسه بلیط</td>
+            <td th:text="${purchase.ticketNumber}"></td>
+        </tr>
+        <tr>
+            <td>نام</td>
+            <td>
+                <span th:if="${purchase.gender == 'MALE'}">آقای </span>
+                <span th:if="${purchase.gender == 'FEMALE'}">خانم </span>
+                <span th:text="${purchase.customerName}"></span>
+            </td>
+        </tr>
+        <tr>
+            <td>جنسیت</td>
+            <td>
+                <span th:if="${purchase.gender == 'MALE'}">مرد</span>
+                <span th:if="${purchase.gender == 'FEMALE'}">زن</span>
+            </td>
+        </tr>
+        <tr>
+            <td>مبدأ</td>
+            <td th:text="${purchase.ticket.departureCity}"></td>
+        </tr>
+        <tr>
+            <td>مقصد</td>
+            <td th:text="${purchase.ticket.destinationCity}"></td>
+        </tr>
+        <tr>
+            <td>تاریخ حرکت</td>
+            <td th:text="${#temporals.format(purchase.ticket.departureDate, 'yyyy/MM/dd')}"></td>
+        </tr>
+        <tr>
+            <td>ساعت حرکت</td>
+            <td th:text="${#temporals.format(purchase.ticket.departureTime, 'HH:mm')}"></td>
+        </tr>
+        <tr>
+            <td>شناسه سفر</td>
+            <td th:text="${purchase.ticket.tripNumber}"></td>
+        </tr>
+    </table>
+
+    <div class="action-buttons">
+        <a href="/my-tickets" class="btn btn-back">بازگشت به لیست بلیط‌ها</a>
+
+        <form th:action="@{/cancel/{id}(id=${purchase.id})}" method="post" id="cancelForm">
+            <button type="button" onclick="showConfirmation()" class="btn btn-cancel">
+                لغو بلیط
+            </button>
+        </form>
+    </div>
+</div>
+
+<div id="confirmationModal" class="confirmation-modal">
+    <div class="modal-content">
+        <h3>تأیید لغو بلیط</h3>
+        <p>آیا مطمئن هستید که می‌خواهید این بلیط را لغو کنید؟</p>
+        <p>این عمل غیرقابل بازگشت است.</p>
+
+        <div class="modal-buttons">
+            <button type="button" onclick="confirmCancel()" class="btn btn-confirm">
+                بله، لغو شود
+            </button>
+            <button type="button" onclick="hideConfirmation()" class="btn btn-cancel-modal">
+                خیر، انصراف
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function showConfirmation() {
+        document.getElementById('confirmationModal').style.display = 'flex';
+    }
+
+    function hideConfirmation() {
+        document.getElementById('confirmationModal').style.display = 'none';
+    }
+
+    function confirmCancel() {
+        document.getElementById('cancelForm').submit();
+    }
+
+    // بستن مدال با کلیک خارج از آن
+    window.onclick = function(event) {
+        var modal = document.getElementById('confirmationModal');
+        if (event.target == modal) {
+            hideConfirmation();
+        }
+    }
+</script>
+</body>
+</html>
