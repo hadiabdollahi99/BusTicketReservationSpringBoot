@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - سیستم خرید بلیط اتوبوس'">سیستم خرید بلیط اتوبوس</title>
+    <link rel="stylesheet" th:href="@{../static/css/style.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+    <div class="container">
+        <a th:href="@{/}" class="navbar-brand">
+            <i class="fas fa-bus"></i> سیستم خرید بلیط اتوبوس
+        </a>
+        <div class="navbar-menu">
+            <a th:href="@{/}" class="nav-link"><i class="fas fa-home"></i> خانه</a>
+
+            <div sec:authorize="!isAuthenticated()">
+                <a th:href="@{/auth/login}" class="nav-link"><i class="fas fa-sign-in-alt"></i> ورود</a>
+                <a th:href="@{/auth/register}" class="nav-link"><i class="fas fa-user-plus"></i> ثبت‌نام</a>
+            </div>
+
+            <div sec:authorize="isAuthenticated()">
+                <a th:href="@{/dashboard}" class="nav-link"><i class="fas fa-tachometer-alt"></i> داشبورد</a>
+                <a th:href="@{/tickets/my-tickets}" class="nav-link"><i class="fas fa-ticket-alt"></i> بلیط‌های من</a>
+                <form th:action="@{/auth/logout}" method="post" class="logout-form">
+                    <button type="submit" class="nav-link btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> خروج
+                    </button>
+                </form>
+                <span class="nav-user" sec:authentication="name"></span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main-content">
+    <div class="container">
+        <!-- Messages -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            <span th:text="${successMessage}"></span>
+        </div>
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <i class="fas fa-exclamation-circle"></i>
+            <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Page Content -->
+        <div th:replace="${content}"></div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <p>&copy; 2024 سیستم خرید بلیط اتوبوس. تمامی حقوق محفوظ است.</p>
+    </div>
+</footer>
+
+<script th:src="@{../static/js/script.js}"></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="layout/base :: head">
+    <title>خرید بلیط</title>
+</head>
+<body>
+<div th:replace="layout/base :: nav"></div>
+
+<div class="purchase-container">
+    <div class="purchase-card">
+        <h2 class="purchase-title"><i class="fas fa-ticket-alt"></i> خرید بلیط</h2>
+
+        <div class="trip-summary">
+            <h3><i class="fas fa-route"></i> اطلاعات سفر</h3>
+            <div class="trip-info">
+                <p><strong>مسیر:</strong>
+                    <span th:text="${ticket.departureCity}"></span>
+                    <i class="fas fa-arrow-right"></i>
+                    <span th:text="${ticket.destinationCity}"></span>
+                </p>
+                <p><strong>تاریخ حرکت:</strong> <span th:text="${ticket.departureDate}"></span></p>
+                <p><strong>ساعت حرکت:</strong> <span th:text="${ticket.departureTime}"></span></p>
+            </div>
+        </div>
+
+        <form th:action="@{/purchases/purchase}" th:object="${ticketDto}" method="post" class="purchase-form">
+            <input type="hidden" th:field="*{ticketId}">
+
+            <div class="form-group">
+                <label for="passengerName"><i class="fas fa-user"></i> نام و نام خانوادگی مسافر</label>
+                <input type="text" id="passengerName" th:field="*{customerName}"
+                       class="form-control" required>
+                <div th:if="${#fields.hasErrors('passengerName')}" class="error-message">
+                    <span th:errors="*{customerName}"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="gender"><i class="fas fa-venus-mars"></i> جنسیت</label>
+                <select id="gender" th:field="*{gender}" class="form-control" required>
+                    <option th:each="gender : ${genders}"
+                            th:value="${gender}"
+                            th:text="${gender}"></option>
+                </select>
+                <div th:if="${#fields.hasErrors('gender')}" class="error-message">
+                    <span th:errors="*{gender}"></span>
+                </div>
+            </div>
+
+
+            <div class="form-actions">
+                <a th:href="@{/dashboard}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> انصراف
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-check-circle"></i> تایید و خرید
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div th:replace="layout/base :: footer"></div>
+</body>
+</html>
