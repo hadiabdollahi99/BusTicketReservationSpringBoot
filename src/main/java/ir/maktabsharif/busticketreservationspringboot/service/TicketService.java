@@ -14,19 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
-
 
 @Service
 @RequiredArgsConstructor
 public class TicketService {
 
-    private final TicketRepository ticketRepository;
     private final UserRepository userRepository;
+    private final TicketRepository ticketRepository;
     private final PurchaseRepository purchaseRepository;
 
     public List<Ticket> searchTickets(SearchDto searchDto) {
@@ -68,11 +64,25 @@ public class TicketService {
         return purchaseRepository.findByUsername(username);
     }
 
+
+    public Purchase getPurchaseById(Long purchaseId) {
+        Purchase purchase = purchaseRepository.findById(purchaseId)
+                .orElseThrow(() -> new RuntimeException("Purchase not found"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+
+        if (!purchase.getUser().getUsername().equals(username)) {
+            throw new RuntimeException("شما مجاز به مشاهده این بلیط نیستید");
+        }
+
+        return purchase;
+    }
+
     public void cancelPurchase(Long purchaseId) {
         Purchase purchase = purchaseRepository.findById(purchaseId)
                 .orElseThrow(() -> new RuntimeException("Purchase not found"));
 
-        // Verify ownership
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
 
@@ -81,36 +91,5 @@ public class TicketService {
         }
 
         purchaseRepository.delete(purchase);
-    }
-
-    public void initializeSampleData() {
-        // Create sample tickets
-        if (ticketRepository.count() == 0) {
-            Ticket ticket1 = Ticket.builder()
-                    .departureCity("Tehran")
-                    .destinationCity("Mashhad")
-                    .departureDate(LocalDate.now().plusDays(1))
-                    .departureTime(LocalTime.of(8, 0))
-                    .tripNumber("THR-MHD-001")
-                    .build();
-
-            Ticket ticket2 = Ticket.builder()
-                    .departureCity("Tehran")
-                    .destinationCity("Mashhad")
-                    .departureDate(LocalDate.now().plusDays(1))
-                    .departureTime(LocalTime.of(14, 30))
-                    .tripNumber("THR-MHD-002")
-                    .build();
-
-            Ticket ticket3 = Ticket.builder()
-                    .departureCity("Tehran")
-                    .destinationCity("Isfahan")
-                    .departureDate(LocalDate.now().plusDays(2))
-                    .departureTime(LocalTime.of(10, 0))
-                    .tripNumber("THR-ESF-001")
-                    .build();
-
-            ticketRepository.saveAll(List.of(ticket1, ticket2, ticket3));
-        }
     }
 }

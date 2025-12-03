@@ -232,7 +232,7 @@
     <div class="action-buttons">
         <a href="/my-tickets" class="btn btn-back">بازگشت به لیست بلیط‌ها</a>
 
-        <form th:action="@{/cancel/{id}(id=${purchase.id})}" method="post" id="cancelForm">
+        <form th:action="@{/my-tickets/cancel/{id}(id=${purchase.id})}" method="post" id="cancelForm">
             <button type="button" onclick="showConfirmation()" class="btn btn-cancel">
                 لغو بلیط
             </button>

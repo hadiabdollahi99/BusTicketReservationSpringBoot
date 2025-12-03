@@ -8,6 +8,12 @@ spring:
     encoding: UTF-8
     cache: false
 
+  mvc:
+    hidden-method:
+      filter:
+        enabled: true  # برای پشتیبانی از PUT/DELETE در فرم‌ها
+
+
   datasource:
     url: jdbc:postgresql://localhost:5432/bus_ticket_reservation
     username: postgres
@@ -22,6 +28,10 @@ spring:
         hibernate:
           format_sql: true
           dialect: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    org.springframework.security: DEBUG
 
 server:
  port: 8081

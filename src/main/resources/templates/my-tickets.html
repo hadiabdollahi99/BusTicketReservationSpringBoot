@@ -173,7 +173,7 @@
                 <td th:text="${#temporals.format(purchase.ticket.departureDate, 'yyyy/MM/dd')}"></td>
                 <td th:text="${purchase.ticketNumber}"></td>
                 <td>
-                    <a th:href="@{/ticket-details/{id}(id=${purchase.id})}" class="btn-view">
+                    <a th:href="@{/my-tickets/details/{id}(id=${purchase.id})}" class="btn-view">
                         مشاهده بلیط
                     </a>
                 </td>

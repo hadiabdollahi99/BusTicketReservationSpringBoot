@@ -6,8 +6,6 @@ import ir.maktabsharif.busticketreservationspringboot.model.User;
 import ir.maktabsharif.busticketreservationspringboot.repository.RoleRepository;
 import ir.maktabsharif.busticketreservationspringboot.repository.TicketRepository;
 import ir.maktabsharif.busticketreservationspringboot.repository.UserRepository;
-import ir.maktabsharif.busticketreservationspringboot.service.TicketService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,56 +13,75 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class DataInitializer implements CommandLineRunner {
-//    private final UserRepository userRepository;
-//    private final RoleRepository roleRepository;
-//    private final TicketRepository ticketRepository;
-//    private final PasswordEncoder passwordEncoder;
 
-    private final TicketService ticketService;
+    private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TicketRepository ticketRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        ticketService.initializeSampleData();
-    }
+        if (roleRepository.count() == 0) {
+            Role adminRole = Role.builder()
+                    .name("ADMIN")
+                    .build();
 
-//    @Override
-//    public void run(String... args) throws Exception {
-//        Role roleAdmin = Role.builder()
-//                .name("ROLE_ADMIN")
-//                .build();
-//        roleRepository.save(roleAdmin);
-//
-//        Role roleUser = Role.builder()
-//                .name("ROLE_USER")
-//                .build();
-//        roleRepository.save(roleUser);
-//
-//
-//        String encodeAdmin = passwordEncoder.encode("123456");
-//        User admin = User.builder()
-//                .username("admin")
-//                .password(encodeAdmin)
-//                .fullName("مدیر سیستم")
-//                .role(roleAdmin)
-//                .enabled(true)
-//                .build();
-//        userRepository.save(admin);
-//
-//        String encodeUser = passwordEncoder.encode("1234");
-//        User user = User.builder()
-//                .username("hadi")
-//                .password(encodeUser)
-//                .fullName("کاربر عادی")
-//                .role(roleUser)
-//                .enabled(true)
-//                .build();
-//        userRepository.save(user);
-//
-//
+            Role userRole = Role.builder()
+                    .name("USER")
+                    .build();
+
+            roleRepository.saveAll(List.of(adminRole, userRole));
+        }
+
+
+        if (userRepository.count() == 0) {
+            Role adminRole = roleRepository.findByName("ADMIN")
+                    .orElseThrow(() -> new RuntimeException("Role ADMIN not found"));
+
+            User admin = User.builder()
+                    .username("admin")
+                    .password(passwordEncoder.encode("admin"))
+                    .fullName("مدیر سیستم")
+                    .enabled(true)
+                    .role(adminRole)
+                    .build();
+
+            userRepository.save(admin);
+        }
+
+        if (ticketRepository.count() == 0) {
+            Ticket ticket1 = Ticket.builder()
+                    .departureCity("Tehran")
+                    .destinationCity("Mashhad")
+                    .departureDate(LocalDate.now().plusDays(1))
+                    .departureTime(LocalTime.of(8, 0))
+                    .tripNumber("THR-MHD-001")
+                    .build();
+
+            Ticket ticket2 = Ticket.builder()
+                    .departureCity("Tehran")
+                    .destinationCity("Mashhad")
+                    .departureDate(LocalDate.now().plusDays(1))
+                    .departureTime(LocalTime.of(14, 30))
+                    .tripNumber("THR-MHD-002")
+                    .build();
+
+            Ticket ticket3 = Ticket.builder()
+                    .departureCity("Tehran")
+                    .destinationCity("Isfahan")
+                    .departureDate(LocalDate.now().plusDays(2))
+                    .departureTime(LocalTime.of(10, 0))
+                    .tripNumber("THR-ESF-001")
+                    .build();
+
+            ticketRepository.saveAll(List.of(ticket1, ticket2, ticket3));
+        }
+
 //        Ticket ticket1 = Ticket.builder()
 //                .admin(admin)
 //                .departureCity("Tehran")
@@ -130,4 +147,5 @@ public class DataInitializer implements CommandLineRunner {
 //        ticketRepository.save(ticket7);
 //
 //    }
+    }
 }
