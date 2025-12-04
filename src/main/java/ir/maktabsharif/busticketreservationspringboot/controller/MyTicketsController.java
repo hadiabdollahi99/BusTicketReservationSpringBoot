@@ -1,6 +1,7 @@
 package ir.maktabsharif.busticketreservationspringboot.controller;
 
 import ir.maktabsharif.busticketreservationspringboot.model.Purchase;
+import ir.maktabsharif.busticketreservationspringboot.service.PurchaseService;
 import ir.maktabsharif.busticketreservationspringboot.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -18,11 +19,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MyTicketsController {
 
-    private final TicketService ticketService;
+    private final PurchaseService purchaseService;
 
     @GetMapping
     public String myTickets(Model model) {
-        List<Purchase> purchases = ticketService.getUserPurchases();
+        List<Purchase> purchases = purchaseService.getUserPurchases();
         model.addAttribute("purchases", purchases);
         return "my-tickets";
     }
@@ -31,7 +32,7 @@ public class MyTicketsController {
     @GetMapping("/details/{purchaseId}")
     public String ticketDetails(@PathVariable Long purchaseId, Model model) {
         try {
-            Purchase purchase = ticketService.getPurchaseById(purchaseId);
+            Purchase purchase = purchaseService.getPurchaseById(purchaseId);
             model.addAttribute("purchase", purchase);
             return "ticket-details";
         } catch (Exception e) {
@@ -43,7 +44,7 @@ public class MyTicketsController {
     public String cancelPurchase(@PathVariable Long purchaseId,
                                  RedirectAttributes redirectAttributes) {
         try {
-            ticketService.cancelPurchase(purchaseId);
+            purchaseService.cancelPurchase(purchaseId);
             redirectAttributes.addFlashAttribute("success",
                     "بلیط با موفقیت لغو شد!");
         } catch (Exception e) {

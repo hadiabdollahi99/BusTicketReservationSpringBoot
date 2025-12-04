@@ -4,6 +4,7 @@ import ir.maktabsharif.busticketreservationspringboot.dto.PurchaseDto;
 import ir.maktabsharif.busticketreservationspringboot.dto.SearchDto;
 import ir.maktabsharif.busticketreservationspringboot.model.Purchase;
 import ir.maktabsharif.busticketreservationspringboot.model.Ticket;
+import ir.maktabsharif.busticketreservationspringboot.service.PurchaseService;
 import ir.maktabsharif.busticketreservationspringboot.service.TicketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -17,6 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TicketController {
 
+    private final PurchaseService purchaseService;
     private final TicketService ticketService;
 
     @GetMapping("/search")
@@ -46,7 +48,7 @@ public class TicketController {
     public String purchase(@ModelAttribute PurchaseDto purchaseDto,
                            RedirectAttributes redirectAttributes) {
         try {
-            Purchase purchase = ticketService.purchaseTicket(purchaseDto);
+            Purchase purchase = purchaseService.purchaseTicket(purchaseDto);
             String gender;
             if (purchase.getGender().equals("MALE")){
                 gender = "آقای";
